@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CustomCell : UICollectionViewCell
+@interface LabelCell : UICollectionViewCell
 
 @property (nonatomic, strong) UILabel* textLabel;
 

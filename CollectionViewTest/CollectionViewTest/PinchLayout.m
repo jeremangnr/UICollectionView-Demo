@@ -34,17 +34,23 @@
             
             attributes.transform3D = CATransform3DConcat(pinchZoomTransform, rotationTransform);
             attributes.center = self.pinchedCellCenter;
+            // put the pinched cell in front
             attributes.zIndex = 1;
             
-            // in this case we are only interested in this cell
-            break;
+            UICollectionViewCell* cell = [self.collectionView cellForItemAtIndexPath:attributes.indexPath];
+            
+            // antialiasing
+            cell.layer.shadowOpacity = 0.01f;
+            cell.layer.shouldRasterize = YES;
+        } else {
+            // and the rest on the back
+            attributes.zIndex = -1;
         }
         
     }
     
     return attribsArray;
 }
-
 
 #pragma mark - Setter methods
 - (void)setPinchedCellScale:(CGFloat)scale

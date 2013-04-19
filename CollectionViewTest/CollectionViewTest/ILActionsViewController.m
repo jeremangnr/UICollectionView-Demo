@@ -10,11 +10,13 @@
 #import "RegularFlowLayout.h"
 #import "LineLayout.h"
 #import "PinchLayout.h"
+#import "CircleLayout.h"
 
 typedef enum {
     RegularLayoutType,
     LineLayoutType,
-    PinchLayoutType
+    PinchLayoutType,
+    CircleLayoutType
 } LayoutType;
 
 @interface ILActionsViewController ()
@@ -79,6 +81,11 @@ typedef enum {
     if ([layout isKindOfClass:[PinchLayout class]]) {
         self.currentLayout = PinchLayoutType;
         self.selectedLayoutPath = [NSIndexPath indexPathForRow:2 inSection:1];
+    }
+    
+    if ([layout isKindOfClass:[CircleLayout class]]) {
+        self.currentLayout = CircleLayoutType;
+        self.selectedLayoutPath = [NSIndexPath indexPathForRow:3 inSection:1];
     }
     
     [self resetCustomizationControlValues];
@@ -208,6 +215,8 @@ typedef enum {
         case 2:
             self.currentLayout = PinchLayoutType;
             break;
+        case 3:
+            self.currentLayout = CircleLayoutType;
             
         default:
             break;
@@ -249,6 +258,15 @@ typedef enum {
         {
             layout = [[PinchLayout alloc] init];
             [self toggleCustomizationControls:YES];
+            
+            break;
+        }
+        case CircleLayoutType:
+        {
+            layout = [[CircleLayout alloc] init];
+            [self toggleCustomizationControls:NO];
+            
+            break;
         }
             
         default:
@@ -263,22 +281,24 @@ typedef enum {
 #pragma mark - Private methods
 - (void)resetCustomizationControlValues
 {
-    UICollectionViewFlowLayout* flowLayout = (UICollectionViewFlowLayout*)self.collectionView.collectionViewLayout;
-    
-    int currentScrollDirection = (flowLayout.scrollDirection == UICollectionViewScrollDirectionVertical) ? 0 : 1;
-    
-    [self.itemWidthSlider setValue:flowLayout.itemSize.width];
-    [self.itemHeightSlider setValue:flowLayout.itemSize.height];
-    [self.lineSpacingSlider setValue:flowLayout.minimumLineSpacing];
-    [self.itemSpacingSlider setValue:flowLayout.minimumInteritemSpacing];
-    [self.sectionInsetSlider setValue:flowLayout.sectionInset.top];
-    [self.scrollDirectionControl setSelectedSegmentIndex:currentScrollDirection];
-    
-    self.itemWidthLabel.text = [NSString stringWithFormat:@"%.0f", flowLayout.itemSize.width];
-    self.itemHeightLabel.text = [NSString stringWithFormat:@"%.0f", flowLayout.itemSize.height];
-    self.lineSpacingLabel.text = [NSString stringWithFormat:@"%.0f", flowLayout.minimumLineSpacing];
-    self.itemSpacingLabel.text = [NSString stringWithFormat:@"%.0f", flowLayout.minimumInteritemSpacing];
-    self.sectionInsetLabel.text = [NSString stringWithFormat:@"%.0f", flowLayout.sectionInset.top];
+    if ([self.collectionView.collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
+        UICollectionViewFlowLayout* layout = (UICollectionViewFlowLayout*)self.collectionView.collectionViewLayout;
+        
+        int currentScrollDirection = (layout.scrollDirection == UICollectionViewScrollDirectionVertical) ? 0 : 1;
+        
+        [self.itemWidthSlider setValue:layout.itemSize.width];
+        [self.itemHeightSlider setValue:layout.itemSize.height];
+        [self.lineSpacingSlider setValue:layout.minimumLineSpacing];
+        [self.itemSpacingSlider setValue:layout.minimumInteritemSpacing];
+        [self.sectionInsetSlider setValue:layout.sectionInset.top];
+        [self.scrollDirectionControl setSelectedSegmentIndex:currentScrollDirection];
+        
+        self.itemWidthLabel.text = [NSString stringWithFormat:@"%.0f", layout.itemSize.width];
+        self.itemHeightLabel.text = [NSString stringWithFormat:@"%.0f", layout.itemSize.height];
+        self.lineSpacingLabel.text = [NSString stringWithFormat:@"%.0f", layout.minimumLineSpacing];
+        self.itemSpacingLabel.text = [NSString stringWithFormat:@"%.0f", layout.minimumInteritemSpacing];
+        self.sectionInsetLabel.text = [NSString stringWithFormat:@"%.0f", layout.sectionInset.top];
+    }
 }
 
 - (void)toggleCustomizationControls:(BOOL)value

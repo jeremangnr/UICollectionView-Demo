@@ -98,9 +98,9 @@
 {
     // adjust the offset so that when we finish scrolling, the target cell is centered in the scroll properly
     CGFloat offsetAdjustment = MAXFLOAT;
-    CGFloat horizontalCenter = proposedContentOffset.x + (CGRectGetWidth(self.collectionView.bounds) / 2.0F);
+    CGFloat horizontalCenter = proposedContentOffset.x + (CGRectGetWidth(self.collectionView.bounds) / 2.0f);
     
-    CGRect targetRect = CGRectMake(proposedContentOffset.x, 0.0F, self.collectionView.bounds.size.width, self.collectionView.bounds.size.height);
+    CGRect targetRect = CGRectMake(proposedContentOffset.x, 0.0f, self.collectionView.bounds.size.width, self.collectionView.bounds.size.height);
     
     NSArray* attribsArray = [super layoutAttributesForElementsInRect:targetRect];
     

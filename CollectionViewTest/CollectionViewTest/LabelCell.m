@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Jeremias Nunez. All rights reserved.
 //
 
-#import "CustomCell.h"
+#import "LabelCell.h"
 
-@implementation CustomCell
+@implementation LabelCell
 
 - (id)initWithFrame:(CGRect)frame
 {

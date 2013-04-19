@@ -17,13 +17,15 @@
 		CF32280B171C8DE3006078AB /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF32280A171C8DE3006078AB /* Default@2x.png */; };
 		CF32280D171C8DE3006078AB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF32280C171C8DE3006078AB /* Default-568h@2x.png */; };
 		CF322813171C8DE3006078AB /* ILViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF322812171C8DE3006078AB /* ILViewController.m */; };
+		CF62801417219B9300E82005 /* CircleLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = CF62801317219B9300E82005 /* CircleLayout.m */; };
+		CF6280171721CBA500E82005 /* RoundedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CF6280161721CBA500E82005 /* RoundedCell.m */; };
 		CF801F88171DA36A00F00812 /* MainStoryboard-iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF801F87171DA36A00F00812 /* MainStoryboard-iPad.storyboard */; };
 		CF801F8B171DA93200F00812 /* ILActionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF801F8A171DA93200F00812 /* ILActionsViewController.m */; };
 		CFB49EE2171F1D140040E9C9 /* PinchLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = CFB49EE1171F1D140040E9C9 /* PinchLayout.m */; };
 		CFB49EE5171F1D9B0040E9C9 /* LineLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = CFB49EE4171F1D9B0040E9C9 /* LineLayout.m */; };
 		CFB49EE7171F26080040E9C9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB49EE6171F26080040E9C9 /* QuartzCore.framework */; };
 		CFB49EEA171F31A50040E9C9 /* RegularFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = CFB49EE9171F31A50040E9C9 /* RegularFlowLayout.m */; };
-		CFB49EEE171F41230040E9C9 /* CustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFB49EED171F41230040E9C9 /* CustomCell.m */; };
+		CFB49EEE171F41230040E9C9 /* LabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFB49EED171F41230040E9C9 /* LabelCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,10 @@
 		CF32280C171C8DE3006078AB /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		CF322811171C8DE3006078AB /* ILViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ILViewController.h; sourceTree = "<group>"; };
 		CF322812171C8DE3006078AB /* ILViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ILViewController.m; sourceTree = "<group>"; };
+		CF62801217219B9300E82005 /* CircleLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleLayout.h; sourceTree = "<group>"; };
+		CF62801317219B9300E82005 /* CircleLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleLayout.m; sourceTree = "<group>"; };
+		CF6280151721CBA500E82005 /* RoundedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedCell.h; sourceTree = "<group>"; };
+		CF6280161721CBA500E82005 /* RoundedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoundedCell.m; sourceTree = "<group>"; };
 		CF801F87171DA36A00F00812 /* MainStoryboard-iPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "MainStoryboard-iPad.storyboard"; sourceTree = "<group>"; };
 		CF801F89171DA93200F00812 /* ILActionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ILActionsViewController.h; sourceTree = "<group>"; };
 		CF801F8A171DA93200F00812 /* ILActionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ILActionsViewController.m; sourceTree = "<group>"; };
@@ -52,8 +58,8 @@
 		CFB49EE6171F26080040E9C9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFB49EE8171F31A50040E9C9 /* RegularFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegularFlowLayout.h; sourceTree = "<group>"; };
 		CFB49EE9171F31A50040E9C9 /* RegularFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegularFlowLayout.m; sourceTree = "<group>"; };
-		CFB49EEC171F41230040E9C9 /* CustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCell.h; sourceTree = "<group>"; };
-		CFB49EED171F41230040E9C9 /* CustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomCell.m; sourceTree = "<group>"; };
+		CFB49EEC171F41230040E9C9 /* LabelCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelCell.h; sourceTree = "<group>"; };
+		CFB49EED171F41230040E9C9 /* LabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LabelCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +145,8 @@
 				CFB49EE4171F1D9B0040E9C9 /* LineLayout.m */,
 				CFB49EE8171F31A50040E9C9 /* RegularFlowLayout.h */,
 				CFB49EE9171F31A50040E9C9 /* RegularFlowLayout.m */,
+				CF62801217219B9300E82005 /* CircleLayout.h */,
+				CF62801317219B9300E82005 /* CircleLayout.m */,
 			);
 			name = Layouts;
 			sourceTree = "<group>";
@@ -146,8 +154,10 @@
 		CFB49EEB171F410A0040E9C9 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				CFB49EEC171F41230040E9C9 /* CustomCell.h */,
-				CFB49EED171F41230040E9C9 /* CustomCell.m */,
+				CFB49EEC171F41230040E9C9 /* LabelCell.h */,
+				CFB49EED171F41230040E9C9 /* LabelCell.m */,
+				CF6280151721CBA500E82005 /* RoundedCell.h */,
+				CF6280161721CBA500E82005 /* RoundedCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -226,7 +236,9 @@
 				CFB49EE2171F1D140040E9C9 /* PinchLayout.m in Sources */,
 				CFB49EE5171F1D9B0040E9C9 /* LineLayout.m in Sources */,
 				CFB49EEA171F31A50040E9C9 /* RegularFlowLayout.m in Sources */,
-				CFB49EEE171F41230040E9C9 /* CustomCell.m in Sources */,
+				CFB49EEE171F41230040E9C9 /* LabelCell.m in Sources */,
+				CF62801417219B9300E82005 /* CircleLayout.m in Sources */,
+				CF6280171721CBA500E82005 /* RoundedCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

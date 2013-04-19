@@ -7,15 +7,22 @@
 //
 
 #import "ILViewController.h"
-#import "CustomCell.h"
+#import "LabelCell.h"
+#import "RoundedCell.h"
 #import "RegularFlowLayout.h"
-#import "LineLayout.h"
 #import "PinchLayout.h"
+#import "CircleLayout.h"
 
 @interface ILViewController ()
 
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
+@property (nonatomic, weak) IBOutlet UIButton *addCellButton;
+@property (nonatomic, weak) IBOutlet UILabel *deleteCellLabel;
+
 @property (nonatomic, weak) UIPopoverController *actionsPopover;
+@property (nonatomic, assign) int items;
+
+- (IBAction)addCellButtonPressed:(id)sender;
 
 @end
 
@@ -26,15 +33,20 @@
 {
     [super viewDidLoad];
     
-    [self.collectionView registerClass:[CustomCell class]
-            forCellWithReuseIdentifier:@"CustomCell"];
+    // observe changes on the collection view's layout so we can update our data source if needed
+    [self.collectionView addObserver:self
+                          forKeyPath:@"collectionViewLayout"
+                             options:NSKeyValueObservingOptionNew
+                             context:nil];
+    
+    [self.collectionView registerClass:[LabelCell class] forCellWithReuseIdentifier:@"LabelCell"];
+    [self.collectionView registerClass:[RoundedCell class] forCellWithReuseIdentifier:@"RoundedCell"];
     
     // init with default flow layout with some customized params (check init to see them)
     RegularFlowLayout* flowLayout = [[RegularFlowLayout alloc] init];
-    
     self.collectionView.collectionViewLayout = flowLayout;
     
-    // add pinch recognizer to use with pinch layout
+    // add recognizers to use with pinch layout
     UIRotationGestureRecognizer* rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self
                                                                                                    action:@selector(handleRotationGesture:)];
     
@@ -42,6 +54,7 @@
                                                                                           action:@selector(handlePinchGesture:)];
     
     pinchRecognizer.delegate = self;
+    rotationRecognizer.delegate = self;
     
     [self.collectionView addGestureRecognizer:rotationRecognizer];
     [self.collectionView addGestureRecognizer:pinchRecognizer];
@@ -50,17 +63,26 @@
 #pragma mark - UICollectionViewDataSource methods
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 60;
+    return self.items;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString* cellIdentifier = @"CustomCell";
+    static NSString* labelCellIdentifier = @"LabelCell";
+    static NSString* roundedCellIdentifier = @"RoundedCell";
     
-    CustomCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier
-                                                                 forIndexPath:indexPath];
+    UICollectionViewLayout* layout = collectionView.collectionViewLayout;
+    BOOL isFlowLayout = [layout isKindOfClass:[UICollectionViewFlowLayout class]];
     
-    cell.textLabel.text = [NSString stringWithFormat:@"%i", indexPath.row];
+    NSString* identifier =  isFlowLayout ? labelCellIdentifier : roundedCellIdentifier;
+    UICollectionViewCell* cell = nil;
+    
+    cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier
+                                                     forIndexPath:indexPath];
+    
+    if (isFlowLayout) {
+        ((LabelCell*)cell).textLabel.text = [layout isKindOfClass:[PinchLayout class]] ? @"Pinch Me!" : [NSString stringWithFormat:@"%i", indexPath.row];
+    }
     
     return cell;
 }
@@ -99,6 +121,7 @@
 
 - (void)handlePinchGesture:(UIPinchGestureRecognizer*)sender
 {
+    // these are only used in the PinchLayout
     if (![self.collectionView.collectionViewLayout isKindOfClass:[PinchLayout class]]) {
         return;
     }
@@ -134,6 +157,7 @@
 
 - (void)handleRotationGesture:(UIRotationGestureRecognizer*)sender
 {
+    // these are only used in the PinchLayout
     if (![self.collectionView.collectionViewLayout isKindOfClass:[PinchLayout class]]) {
         return;
     }
@@ -166,4 +190,41 @@
     }
 }
 
+#pragma mark - NSKeyValueObserving methods
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"collectionViewLayout"]) {
+        UICollectionViewLayout* layout = [change objectForKey:NSKeyValueChangeNewKey];
+        
+        if ([layout isKindOfClass:[CircleLayout class]]) {
+            self.items = 20;
+            
+            // unhide buttons
+            self.addCellButton.hidden = NO;
+            self.deleteCellLabel.hidden = NO;
+            
+        } else {
+            self.items = 60;
+            
+            self.addCellButton.hidden = YES;
+            self.deleteCellLabel.hidden = YES;
+        }
+        
+        [self.collectionView reloadData];
+    }
+}
+
+#pragma mark - IBActions
+- (IBAction)addCellButtonPressed:(id)sender
+{
+    self.items++;
+    
+    NSIndexPath* insertPath = [NSIndexPath indexPathForRow:self.items - 1 inSection:0];
+    
+    [self.collectionView performBatchUpdates:^{
+        
+        [self.collectionView insertItemsAtIndexPaths:[NSArray arrayWithObject:insertPath]];
+        
+    } completion:nil];
+}
 @end
