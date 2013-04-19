@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "ILActionsViewController.h"
 
-@interface ILViewController : UIViewController<UICollectionViewDataSource>
+@interface ILViewController : UIViewController<UICollectionViewDataSource, UIGestureRecognizerDelegate>
 
 @end

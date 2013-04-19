@@ -6,8 +6,13 @@
 //  Copyright (c) 2013 Jeremias Nunez. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "RegularFlowLayout.h"
 
-@interface PinchLayout : UICollectionViewFlowLayout
+@interface PinchLayout : RegularFlowLayout
+
+@property (nonatomic, assign) CGFloat pinchedCellScale;
+@property (nonatomic, assign) CGFloat pinchedCellRotationAngle; // in radians
+@property (nonatomic, assign) CGPoint pinchedCellCenter;
+@property (nonatomic, strong) NSIndexPath* pinchedCellPath;
 
 @end

@@ -19,6 +19,12 @@
 #define ACTIVE_DISTANCE 200.0f
 #define ZOOM_FACTOR 0.3f
 
+/**
+ * Here's a totally obvious but no-so-easy-to-see condition regarding itemSize I came across while testing:
+ *
+ * item height <= collectionView.bounds.size.height - (top section inset + bottom section inset)
+ * item width <= collectionView.bounds.size.widt - (left section inset + right section inset)
+ **/
 #define ITEM_SIZE 200.0f
 
 #define SECTION_INSETS_PORTRAIT UIEdgeInsetsMake(300.0f, 0.0f, 300.0f, 0.0f)
@@ -54,10 +60,7 @@
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)oldBounds
 {
     // update the layout (redraw) when we scroll throught it, we do this so we can zoom in on the center element
-    
-    // item height <= collectionView.bounds.size.height - (top inset + bottom inset)
-    // item width <= collectionView.bounds.size.widt - (left inset + right inset)
-    
+    // we also update the section inset here (it's bigger for portrait) so we always have ONE row, maintaining the "line" layout
     self.sectionInset = [self sectionInsetsForCurrentInterfaceOrientation];
     
     return YES;
@@ -72,7 +75,7 @@
     visibleRect.size = self.collectionView.bounds.size;
     
     for (UICollectionViewLayoutAttributes* attributes in attribsArray) {
-        // if the item is the item in the "middle", we'll apply a small zoom to it
+        // we'll apply a small zoom to the items that are on the visible area
         if (CGRectIntersectsRect(attributes.frame, visibleRect)) {
             // do some weird math
             CGFloat distance = CGRectGetMidX(visibleRect) - attributes.center.x;

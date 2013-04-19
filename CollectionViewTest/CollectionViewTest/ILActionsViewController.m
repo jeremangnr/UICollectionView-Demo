@@ -9,10 +9,12 @@
 #import "ILActionsViewController.h"
 #import "RegularFlowLayout.h"
 #import "LineLayout.h"
+#import "PinchLayout.h"
 
 typedef enum {
     RegularLayoutType,
-    LineLayoutType
+    LineLayoutType,
+    PinchLayoutType
 } LayoutType;
 
 @interface ILActionsViewController ()
@@ -74,6 +76,11 @@ typedef enum {
         self.selectedLayoutPath = [NSIndexPath indexPathForRow:1 inSection:1];
     }
     
+    if ([layout isKindOfClass:[PinchLayout class]]) {
+        self.currentLayout = PinchLayoutType;
+        self.selectedLayoutPath = [NSIndexPath indexPathForRow:2 inSection:1];
+    }
+    
     [self resetCustomizationControlValues];
 }
 
@@ -90,8 +97,7 @@ typedef enum {
         UICollectionViewFlowLayout* flowLayout = (UICollectionViewFlowLayout*) self.collectionView.collectionViewLayout;
         flowLayout.itemSize = CGSizeMake(newWidth, flowLayout.itemSize.height);
         
-    }
-                                  completion:nil];
+    } completion:nil];
 }
 
 - (IBAction)itemHeightValueChanged:(id)sender;
@@ -106,8 +112,7 @@ typedef enum {
         UICollectionViewFlowLayout* flowLayout = (UICollectionViewFlowLayout*) self.collectionView.collectionViewLayout;
         flowLayout.itemSize = CGSizeMake(flowLayout.itemSize.width, newHeight);
         
-    }
-                                  completion:nil];
+    } completion:nil];
 }
 
 - (IBAction)scrollDirectionValueChanged:(id)sender
@@ -121,8 +126,7 @@ typedef enum {
         UICollectionViewFlowLayout* flowLayout = (UICollectionViewFlowLayout*) self.collectionView.collectionViewLayout;
         flowLayout.scrollDirection = newDirection;
         
-    }
-                                  completion:nil];
+    } completion:nil];
 }
 
 - (IBAction)lineSpacingValueChanged:(id)sender
@@ -137,8 +141,7 @@ typedef enum {
         UICollectionViewFlowLayout* flowLayout = (UICollectionViewFlowLayout*) self.collectionView.collectionViewLayout;
         flowLayout.minimumLineSpacing = newLineSpacing;
         
-    }
-                                  completion:nil];
+    } completion:nil];
 }
 
 - (IBAction)itemSpacingValueChanged:(id)sender
@@ -153,8 +156,7 @@ typedef enum {
         UICollectionViewFlowLayout* flowLayout = (UICollectionViewFlowLayout*) self.collectionView.collectionViewLayout;
         flowLayout.minimumInteritemSpacing = newItemSpacing;
         
-    }
-                                  completion:nil];
+    } completion:nil];
 }
 
 - (IBAction)sectionInsetValueChanged:(id)sender
@@ -169,8 +171,7 @@ typedef enum {
         UICollectionViewFlowLayout* flowLayout = (UICollectionViewFlowLayout*) self.collectionView.collectionViewLayout;
         flowLayout.sectionInset = UIEdgeInsetsMake(newInset, newInset, newInset, newInset);
         
-    }
-                                  completion:nil];
+    } completion:nil];
 }
 
 #pragma mark - UITableViewDataSource methods
@@ -204,6 +205,9 @@ typedef enum {
         case 1:
             self.currentLayout = LineLayoutType;
             break;
+        case 2:
+            self.currentLayout = PinchLayoutType;
+            break;
             
         default:
             break;
@@ -227,7 +231,6 @@ typedef enum {
         case RegularLayoutType:
         {
             layout = [[RegularFlowLayout alloc] init];
-            
             // we can customize anything we want here
             [self toggleCustomizationControls:YES];
             
@@ -236,12 +239,16 @@ typedef enum {
         case LineLayoutType:
         {
             layout = [[LineLayout alloc] init];
-            
             // the layout parameters are specifically customized to achieve this look, if we changed them we'll lose it.
             // that's why we'll disable them
             [self toggleCustomizationControls:NO];
             
             break;
+        }
+        case PinchLayoutType:
+        {
+            layout = [[PinchLayout alloc] init];
+            [self toggleCustomizationControls:YES];
         }
             
         default:
