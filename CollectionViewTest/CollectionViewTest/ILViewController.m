@@ -15,14 +15,28 @@
 
 @interface ILViewController ()
 
+// UI Properties
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic, weak) IBOutlet UIButton *addCellButton;
 @property (nonatomic, weak) IBOutlet UILabel *deleteCellLabel;
 
+
+// Non-UI Properties
 @property (nonatomic, weak) UIPopoverController *actionsPopover;
 @property (nonatomic, assign) int items;
 
+// Gesture Recognizers
+@property (nonatomic, strong) UIPinchGestureRecognizer* pinchRecognizer;
+@property (nonatomic, strong) UIRotationGestureRecognizer* rotationRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer* tapRecognizer;
+
+// IBActions
 - (IBAction)addCellButtonPressed:(id)sender;
+
+// Private methods
+- (void)handlePinchGesture:(UIPinchGestureRecognizer*)sender;
+- (void)handleRotationGesture:(UIRotationGestureRecognizer*)sender;
+- (void)handleTapGesture:(UITapGestureRecognizer*)sender;
 
 @end
 
@@ -46,18 +60,21 @@
     RegularFlowLayout* flowLayout = [[RegularFlowLayout alloc] init];
     self.collectionView.collectionViewLayout = flowLayout;
     
-    // add recognizers to use with pinch layout
-    UIRotationGestureRecognizer* rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self
-                                                                                                   action:@selector(handleRotationGesture:)];
+    _rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotationGesture:)];
+    _pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
+    _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
     
-    UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self
-                                                                                          action:@selector(handlePinchGesture:)];
+    self.pinchRecognizer.delegate = self;
+    self.rotationRecognizer.delegate = self;
+    self.tapRecognizer.delegate = self;
     
-    pinchRecognizer.delegate = self;
-    rotationRecognizer.delegate = self;
+    [self.collectionView addGestureRecognizer:self.rotationRecognizer];
+    [self.collectionView addGestureRecognizer:self.pinchRecognizer];
+    [self.collectionView addGestureRecognizer:self.tapRecognizer];
     
-    [self.collectionView addGestureRecognizer:rotationRecognizer];
-    [self.collectionView addGestureRecognizer:pinchRecognizer];
+    self.pinchRecognizer.enabled = NO;
+    self.rotationRecognizer.enabled = NO;
+    self.tapRecognizer.enabled = NO;
 }
 
 #pragma mark - UICollectionViewDataSource methods
@@ -113,12 +130,13 @@
     }
 }
 
-#pragma mark - UIGestureRecognizer handling methods
+#pragma mark - UIGestureRecognizerDelegate methods
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;
 }
 
+#pragma mark - UIGestureRecognizer handling methods
 - (void)handlePinchGesture:(UIPinchGestureRecognizer*)sender
 {
     // these are only used in the PinchLayout
@@ -166,7 +184,7 @@
     
     if (sender.state == UIGestureRecognizerStateBegan) {
         
-        // get the index path of the pinched cell, we need this so we now on which cell to apply the rotation attributes
+        // get the index path of the pinched cell, we need this so we know on which cell to apply the rotation attributes
         CGPoint initialPinchPoint = [sender locationInView:self.collectionView];
         NSIndexPath* pinchedCellPath = [self.collectionView indexPathForItemAtPoint:initialPinchPoint];
         
@@ -190,12 +208,41 @@
     }
 }
 
+- (void)handleTapGesture:(UITapGestureRecognizer*)sender
+{
+    if (![self.collectionView.collectionViewLayout isKindOfClass:[CircleLayout class]]) {
+        return;
+    }
+    
+    CGPoint tapLocation = [sender locationInView:self.collectionView];
+    NSIndexPath* tappedItemIndexPath = [self.collectionView indexPathForItemAtPoint:tapLocation];
+    
+    if (tappedItemIndexPath) {
+        
+        self.items--;
+        
+        [self.collectionView performBatchUpdates:^{
+            [self.collectionView deleteItemsAtIndexPaths:[NSArray arrayWithObject:tappedItemIndexPath]];
+        } completion:nil];
+        
+    }
+}
+
 #pragma mark - NSKeyValueObserving methods
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"collectionViewLayout"]) {
         UICollectionViewLayout* layout = [change objectForKey:NSKeyValueChangeNewKey];
         
+        // reset values
+        self.items = 60;
+        self.addCellButton.hidden = YES;
+        self.deleteCellLabel.hidden = YES;
+        self.pinchRecognizer.enabled = NO;
+        self.rotationRecognizer.enabled = NO;
+        self.tapRecognizer.enabled = NO;
+        
+        // the "add cell" button is only used in the circle layout
         if ([layout isKindOfClass:[CircleLayout class]]) {
             self.items = 20;
             
@@ -203,11 +250,13 @@
             self.addCellButton.hidden = NO;
             self.deleteCellLabel.hidden = NO;
             
-        } else {
-            self.items = 60;
-            
-            self.addCellButton.hidden = YES;
-            self.deleteCellLabel.hidden = YES;
+            // used to delete cells by tapping on them
+            self.tapRecognizer.enabled = YES;
+        }
+        
+        if ([layout isKindOfClass:[PinchLayout class]]) {
+            self.pinchRecognizer.enabled = YES;
+            self.rotationRecognizer.enabled = YES;
         }
         
         [self.collectionView reloadData];
@@ -222,9 +271,7 @@
     NSIndexPath* insertPath = [NSIndexPath indexPathForRow:self.items - 1 inSection:0];
     
     [self.collectionView performBatchUpdates:^{
-        
         [self.collectionView insertItemsAtIndexPaths:[NSArray arrayWithObject:insertPath]];
-        
     } completion:nil];
 }
 @end

@@ -10,6 +10,4 @@
 
 @interface CircleLayout : UICollectionViewLayout
 
-@property (nonatomic, assign) CGFloat radius;
-
 @end

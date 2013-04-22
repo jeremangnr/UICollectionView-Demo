@@ -13,6 +13,10 @@
 // store these here just for practicality
 @property (nonatomic, assign) NSInteger cellCount;
 @property (nonatomic, assign) CGPoint center;
+@property (nonatomic, assign) CGFloat radius;
+
+@property (nonatomic, strong) NSMutableArray* insertedItems;
+@property (nonatomic, strong) NSMutableArray* deletedItems;
 
 @end
 
@@ -25,6 +29,8 @@
     self = [super init];
     
     if (self) {
+        _insertedItems = [[NSMutableArray alloc] init];
+        _deletedItems = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -51,6 +57,7 @@
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)oldBounds
 {
+    // we override this so the circle's center and radius is adjusted when we rotate the device
     return YES;
 }
 
@@ -82,23 +89,57 @@
 }
 
 // these methods animate insertion/deletion of cells
-- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForInsertedItemAtIndexPath:(NSIndexPath *)itemIndexPath
+- (void)prepareForCollectionViewUpdates:(NSArray *)updateItems
+{
+    [self.insertedItems removeAllObjects];
+    [self.deletedItems removeAllObjects];
+    
+    for (UICollectionViewUpdateItem* item in updateItems) {
+        if (item.updateAction == UICollectionUpdateActionInsert) {
+            [self.insertedItems addObject:item];
+        }
+        
+        if (item.updateAction == UICollectionUpdateActionDelete) {
+            [self.deletedItems addObject:item];
+        }
+    }
+}
+
+- (UICollectionViewLayoutAttributes*)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
 {
     UICollectionViewLayoutAttributes* attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
     
-    attributes.alpha = 0.0f;
-    attributes.center = CGPointMake(self.center.x, self.center.y);
+    for (UICollectionViewUpdateItem* item in self.insertedItems) {
+        if ([itemIndexPath isEqual:item.indexPathAfterUpdate]) {
+            
+            // this will make the cell come from the center and flip around the Y axis
+            attributes.alpha = 0.0f;
+            attributes.center = CGPointMake(self.center.x, self.center.y);
+            attributes.transform3D = CATransform3DMakeRotation(M_PI, 0.0f, 1.0f, 0.0f);
+            
+            break;
+        }
+    }
     
     return attributes;
 }
 
-- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDeletedItemAtIndexPath:(NSIndexPath *)itemIndexPath
+- (UICollectionViewLayoutAttributes*)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
 {
     UICollectionViewLayoutAttributes* attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
     
-    attributes.alpha = 0.0f;
-    attributes.center = CGPointMake(self.center.x, self.center.y);
-    attributes.transform3D = CATransform3DMakeScale(0.1f, 0.1f, 1.0f);
+    for (UICollectionViewUpdateItem* item in self.deletedItems) {
+        // this is important. notice that here we use indexPathBeforeUpdate, because since we are deleting
+        // a cell, indexPathAfterUpdate will be nil in this case (the cell won't exist anymore)
+        if ([itemIndexPath isEqual:item.indexPathBeforeUpdate]) {
+            
+            attributes.alpha = 0.0f;
+            attributes.center = CGPointMake(self.center.x, self.center.y);
+            attributes.transform3D = CATransform3DMakeScale(0.1f, 0.1f, 1.0f);
+            
+            break;
+        }
+    }
     
     return attributes;
 }
